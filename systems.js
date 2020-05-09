@@ -1,3 +1,4 @@
+import { Accelerometer } from 'expo-sensors';
 
 const VirusSpawner = (entities, { touches, time }) => {
   
@@ -39,30 +40,42 @@ const VirusSpawner = (entities, { touches, time }) => {
 };
 
 
-const MoveFighter = (entities, { touches }) => {
- 
+const MoveFighter = (entities, props) => {
   if (renderers[2] && !renderers[2].isAnimating)
-    renderers[2].play("idle");	
+    renderers[2].play("idle");
+    // console.log(props);
+    // console.log(currY);
   
   //-- I'm choosing to update the game state (entities) directly for the sake of brevity and simplicity.
   //-- There's nothing stopping you from treating the game state as immutable and returning a copy..
   //-- Example: return { ...entities, t.id: { UPDATED COMPONENTS }};
   //-- That said, it's probably worth considering performance implications in either case.
- 
-  touches.filter(t => t.type === "move").forEach(t => {
-       
+
+
+
     let finger = entities[2];
-    
     if (finger && finger.position) {
-      finger.position = [
-        finger.position[0] + t.delta.pageX,
-        finger.position[1] + t.delta.pageY
-      ];
+      let diffX
+      let diffY;
+      Accelerometer.addListener(accelerometerData => {
+        // Accelerometer.setUpdateInterval(500);
+        // console.log("myAccl: "+Math.round(Number(JSON.stringify(accelerometerData.x))*10) +" "+ Math.round(Number(JSON.stringify(accelerometerData.y))*10));
+        diffX=Math.round(Number(JSON.stringify(accelerometerData.x))*10);
+        diffY=Math.round(Number(JSON.stringify(accelerometerData.y))*10);
+        // console.log("x: "+diffX);
+        // console.log("x: "+diffY);
+        finger.position = [
+          finger.position[0]=finger.position[0]- Math.round(Number(JSON.stringify(accelerometerData.x))*10),
+          finger.position[1]=finger.position[1] + Math.round(Number(JSON.stringify(accelerometerData.y))*10),
+        ];
+        Accelerometer.removeAllListeners();
+      });
+      
+
       
       
     }
-  });
- 
+
   return entities;
 };
  

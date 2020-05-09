@@ -1,6 +1,7 @@
 import React, { PureComponent } from "react";
 import { StyleSheet, View, Animated, Easing, Image } from "react-native";
 import SpriteSheet from 'rn-sprite-sheet';
+import { Accelerometer } from 'expo-sensors';
  
 class Fighter extends PureComponent {
   
@@ -181,7 +182,7 @@ class Background extends PureComponent {
         style={{
           overflow: "hidden",
           width: 412,
-          height: 684,
+          height: 2*684,
           backgroundColor: "black",
           position: "absolute",
           left: 0,
@@ -190,14 +191,14 @@ class Background extends PureComponent {
 	    <Animated.Image
         style={{
           width: 412,
-          height: 3*412,
+          height: 4*412,
           transform: [ { translateX: 0}, 
                        { translateY: this.animatedValue.interpolate({
                     inputRange:  [0, 1],
                     outputRange: [-412, 1]}) } ]
         }}
         fadeDuration={0} 
-        source={require('./images/bkgnd1_2x1.png')}
+        source={require('./images/bkgnd1_2x1_1080x2340.png')}
         resizeMode={"stretch"}
       />
 	  </View>

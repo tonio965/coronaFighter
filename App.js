@@ -8,19 +8,37 @@ import { Dimensions, AppRegistry, StyleSheet, StatusBar } from "react-native";
 import { GameEngine } from "react-native-game-engine";
 import { Virus, Background, Fighter } from "./renderers";
 import { MoveFighter, VirusSpawner} from "./systems"
+import { Accelerometer } from 'expo-sensors';
 
 global.renderers = [];
  
 export default class BestGameEver extends PureComponent {
   constructor() {
     super();
+    this.state = {
+      x: 150,
+      y: 150
+    };
   }
  
   render() {
 
     let width = Math.round(Dimensions.get('window').width);
     let height = Math.round(Dimensions.get('window').height);
-    
+    let currX;
+    let currY;
+    // Accelerometer.addListener(accelerometerData => {
+    //   this.setState({
+    //     x: this.state.x + Number(JSON.stringify(accelerometerData.x)),
+    //     y: this.state.y+Number(JSON.stringify(accelerometerData.y))
+    //   });
+    //   console.log("myAccl: "+this.state.x +" "+ this.state.y);
+    // //   // this.state.x=this.state.x + Number(JSON.stringify(accelerometerData.x))*10;
+    // //   // this.state.y=this.state.y+Number(JSON.stringify(accelerometerData.y))*10;
+    //   // console.log(this.state);
+    //   // console.log(currY);
+    // });
+
     // Tutaj statycznie dodajemy wszystkie byty do sceny (entities), 
     //   type - typy bytów b-background, f-fighter, v-virus
     //   position - pozycja komponetyu na ekranie
@@ -45,7 +63,7 @@ export default class BestGameEver extends PureComponent {
         systems={[MoveFighter, VirusSpawner]} // funkcje logiki (kontrolery) uruchamiane co 16ms (teoretycznie)
         entities={{ 
           1: { id: 1, type: 'b', position: [40,  200], renderer: <Background />}, // tlo
-          2: { id: 2, type: 'f', position: [width/2-64, height-200], renderer: <Fighter />}, // fajter
+          2: { id: 2, type: 'f', position: [150,150], renderer: <Fighter />}, // fajter
           3: { id: 3, type: 'v', position: [10, 0], renderer: Virus}, // zaraza
           4: { id: 4, type: 'v', position: [20, 0], renderer: Virus}, 
           5: { id: 5, type: 'v', position: [40, 0], renderer: Virus}  
