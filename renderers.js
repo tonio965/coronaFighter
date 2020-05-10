@@ -73,9 +73,7 @@ class Score extends PureComponent {
   render() {
     const x = this.props.position[0];
     const y = this.props.position[1];
-    const text = "text";
     const scorey = this.props.amount;
-    console.log(this.props.amount);
   
     
       
@@ -83,6 +81,33 @@ class Score extends PureComponent {
       <View>
        <Text style={styles.baseText}>Score :  {scorey}</Text>
       </View>
+    );
+  }
+}
+
+class Bullet extends PureComponent {
+  constructor(props){
+    super(props)
+  }
+  render (){
+    var img;
+    const xpos = this.props.position[0];
+    const ypos = this.props.position[1];
+    console.log("render: " + this.props.id +" "+xpos+" "+ypos);
+    img = require('./images/bullet.png');
+
+    return (
+     
+     <Image
+        style={{
+          height: 80,
+          width: 80,
+          top: xpos,
+          left: ypos,
+          resizeMode: 'stretch'
+        }}
+        source={img}
+      />
     );
   }
 }
@@ -242,6 +267,6 @@ const styles = StyleSheet.create({
   }
 });
  
-export { Virus, Background, Fighter, Score};
+export { Virus, Background, Fighter, Score, Bullet};
 
 

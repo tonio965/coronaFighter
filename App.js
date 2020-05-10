@@ -6,9 +6,8 @@
 import React, { PureComponent } from "react";
 import { Dimensions, AppRegistry, StyleSheet, StatusBar, Text } from "react-native";
 import { GameEngine } from "react-native-game-engine";
-import { Virus, Background, Fighter, Score } from "./renderers";
-import { MoveFighter, VirusSpawner} from "./systems"
-import { Accelerometer } from 'expo-sensors';
+import { Virus, Background, Fighter, Score, Bullet } from "./renderers";
+import { MoveFighter, VirusSpawner,ShootAmmo} from "./systems"
 
 global.renderers = [];
  
@@ -68,7 +67,8 @@ export default class BestGameEver extends PureComponent {
           3: { id: 3, type: 'v', position: [10, 0],isHit:false, renderer: Virus}, // zaraza
           4: { id: 4, type: 'v', position: [20, 0],isHit:false, renderer: Virus}, 
           5: { id: 5, type: 'v', position: [40, 0],isHit:false, renderer: Virus},
-          6: {id: 6, type: 's', position: [80,80], renderer: Score, amount:this.state.score}, 
+          6: {id: 6, type: 's', position: [80,80], renderer: Score, amount:this.state.score},
+          7: {id: 7, type: "bu", position: [150,150], renderer: Bullet}
         }}>
 
         <StatusBar hidden={true} />

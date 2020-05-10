@@ -46,10 +46,40 @@ const VirusSpawner = (entities, { touches, time }) => {
   return entities;
 };
 
+const ShootAmmo = (entities, { touches }) => {
 
-const MoveFighter = (entities, props) => {
+  if (renderers[7] && !renderers[7].isAnimating)
+    renderers[7].play("idle");	
+  
+  //-- I'm choosing to update the game state (entities) directly for the sake of brevity and simplicity.
+  //-- There's nothing stopping you from treating the game state as immutable and returning a copy..
+  //-- Example: return { ...entities, t.id: { UPDATED COMPONENTS }};
+  //-- That said, it's probably worth considering performance implications in either case.
+ 
+  touches.filter(t => t.type === "press").forEach(t => {
+       
+    let bul = entities[7];
+    
+    if (bul && bul.position) {
+      let count = 0;
+      bul.position[0]=entities[2].position[0];
+      bul.position[1]=entities[2].position[1];
+      // entities[7].position[0]=finger.position[0];
+      // entities[7].position[1]=finger.position[1];
+      entities[7].position[0]=entities[7].position[0]+2;
+      entities[7].position[0]= entities[7].position[0]+2;
+
+      console.log("position"+ entities[7].position[0]+" "+ entities[7].position[1]);
+    }
+  });
+ 
+  return entities;
+};
+
+const MoveFighter = (entities, {touches}) => {
   if (renderers[2] && !renderers[2].isAnimating)
     renderers[2].play("idle");
+    // console.log(renderers);
     // console.log(props);
     // console.log(currY);
   
@@ -58,6 +88,24 @@ const MoveFighter = (entities, props) => {
   //-- Example: return { ...entities, t.id: { UPDATED COMPONENTS }};
   //-- That said, it's probably worth considering performance implications in either case.
 
+  touches.filter(t => t.type === "press").forEach(t => {
+       
+    let finger = entities[7];
+    
+    if (finger && finger.position) {
+      finger.position = [
+        finger.position[0]= entities[2].position[1],
+        finger.position[1]= entities[2].position[0]
+      ];
+      console.log("pagex: "+finger.position[0]);
+      console.log("pagey: "+finger.position[1]);
+      
+      // console.log(t.delta.pageX);
+      // console.log(t.delta.pageY);
+      
+      
+    }
+  });
 
 
     let finger = entities[2];
@@ -82,4 +130,4 @@ const MoveFighter = (entities, props) => {
   return entities;
 };
  
-export { MoveFighter, VirusSpawner };
+export { MoveFighter, VirusSpawner, ShootAmmo };
