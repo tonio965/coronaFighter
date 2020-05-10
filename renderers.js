@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View, Animated, Easing, Image } from "react-native";
+import { StyleSheet, View, Animated, Easing, Image, Text } from "react-native";
 import SpriteSheet from 'rn-sprite-sheet';
 import { Accelerometer } from 'expo-sensors';
  
@@ -64,6 +64,28 @@ class Fighter extends PureComponent {
     );
   }
 }
+class Score extends PureComponent {
+  constructor(props) {
+    super(props);
+  }	
+    
+    
+  render() {
+    const x = this.props.position[0];
+    const y = this.props.position[1];
+    const text = "text";
+    const scorey = this.props.amount;
+    console.log(this.props.amount);
+  
+    
+      
+    return (
+      <View>
+       <Text style={styles.baseText}>Score :  {scorey}</Text>
+      </View>
+    );
+  }
+}
 
 class Virus extends PureComponent {
   
@@ -102,8 +124,9 @@ class Virus extends PureComponent {
     
     var img;
     
-    if (this.props.hit)
+    if (this.props.hit){
       img = require('./images/explosion.png');
+    }
     else
       img = require('./images/virus.png');
     
@@ -205,7 +228,20 @@ class Background extends PureComponent {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  baseText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "white"
+
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: "bold"
+  }
+});
  
-export { Virus, Background, Fighter};
+export { Virus, Background, Fighter, Score};
 
 

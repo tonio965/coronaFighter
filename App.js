@@ -4,9 +4,9 @@
  */
 
 import React, { PureComponent } from "react";
-import { Dimensions, AppRegistry, StyleSheet, StatusBar } from "react-native";
+import { Dimensions, AppRegistry, StyleSheet, StatusBar, Text } from "react-native";
 import { GameEngine } from "react-native-game-engine";
-import { Virus, Background, Fighter } from "./renderers";
+import { Virus, Background, Fighter, Score } from "./renderers";
 import { MoveFighter, VirusSpawner} from "./systems"
 import { Accelerometer } from 'expo-sensors';
 
@@ -17,7 +17,8 @@ export default class BestGameEver extends PureComponent {
     super();
     this.state = {
       x: 150,
-      y: 150
+      y: 150,
+      score: 0
     };
   }
  
@@ -62,11 +63,12 @@ export default class BestGameEver extends PureComponent {
         style={styles.container}
         systems={[MoveFighter, VirusSpawner]} // funkcje logiki (kontrolery) uruchamiane co 16ms (teoretycznie)
         entities={{ 
-          1: { id: 1, type: 'b', position: [40,  200], renderer: <Background />}, // tlo
-          2: { id: 2, type: 'f', position: [150,150], renderer: <Fighter />}, // fajter
-          3: { id: 3, type: 'v', position: [10, 0], renderer: Virus}, // zaraza
-          4: { id: 4, type: 'v', position: [20, 0], renderer: Virus}, 
-          5: { id: 5, type: 'v', position: [40, 0], renderer: Virus}  
+          1: { id: 1, type: 'b', position: [40,  200], isHit:false, renderer: <Background />}, // tlo
+          2: { id: 2, type: 'f', position: [150,150],isHit:false, renderer: <Fighter />}, // fajter
+          3: { id: 3, type: 'v', position: [10, 0],isHit:false, renderer: Virus}, // zaraza
+          4: { id: 4, type: 'v', position: [20, 0],isHit:false, renderer: Virus}, 
+          5: { id: 5, type: 'v', position: [40, 0],isHit:false, renderer: Virus},
+          6: {id: 6, type: 's', position: [80,80], renderer: Score, amount:this.state.score}, 
         }}>
 
         <StatusBar hidden={true} />

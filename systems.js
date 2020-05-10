@@ -22,8 +22,14 @@ const VirusSpawner = (entities, { touches, time }) => {
         let y = 684*renderers[id]._animatedValue+40;
         
         if (Math.abs(entities[2].position[0]+64 - x) < 64 &&
-            Math.abs(entities[2].position[1]+64 - y) < 64)
-          entities[id].hit = 1;
+            Math.abs(entities[2].position[1]+64 - y) < 64){
+              if(entities[id].isHit===false){
+                entities[id].isHit=true;
+                entities[id].hit = 1;
+                entities[6].amount++;
+                console.log(entities[6].amount);
+              }
+          }
       }
            
       if (renderers[id] && !renderers[id].isMoving) { // "uspiony" za krawedzią ekranu
@@ -31,6 +37,7 @@ const VirusSpawner = (entities, { touches, time }) => {
         if (d < 10) { // czestotliwosc wypuszczania nowych wirusow = 10/1000 = 0.01 (czyli 1 raz na 100 tikow)
           entities[id].position = [(412-80)*Math.random(), 0]; // losowa pozycja x
           entities[id].hit = 0;
+          entities[id].isHit = false;
           renderers[id].play(4000 + 4000*Math.random()); // losowy czas animacji (przelotu przez cały ekran) 4-8s
         }
       }
@@ -58,12 +65,8 @@ const MoveFighter = (entities, props) => {
       let diffX
       let diffY;
       Accelerometer.addListener(accelerometerData => {
-        // Accelerometer.setUpdateInterval(500);
-        // console.log("myAccl: "+Math.round(Number(JSON.stringify(accelerometerData.x))*10) +" "+ Math.round(Number(JSON.stringify(accelerometerData.y))*10));
         diffX=Math.round(Number(JSON.stringify(accelerometerData.x))*10);
         diffY=Math.round(Number(JSON.stringify(accelerometerData.y))*10);
-        // console.log("x: "+diffX);
-        // console.log("x: "+diffY);
         finger.position = [
           finger.position[0]=finger.position[0]- Math.round(Number(JSON.stringify(accelerometerData.x))*10),
           finger.position[1]=finger.position[1] + Math.round(Number(JSON.stringify(accelerometerData.y))*10),
