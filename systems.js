@@ -99,6 +99,7 @@ const MoveFighter = (entities, {touches}) => {
       ];
       console.log("pagex: "+finger.position[0]);
       console.log("pagey: "+finger.position[1]);
+      renderers[7].play();
       
       // console.log(t.delta.pageX);
       // console.log(t.delta.pageY);

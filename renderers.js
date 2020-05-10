@@ -87,27 +87,76 @@ class Score extends PureComponent {
 
 class Bullet extends PureComponent {
   constructor(props){
-    super(props)
+    super(props);
+    renderers[this.props.id] = this;
+    console.log("xd" + JSON.stringify(renderers[this.props.id])); // co to
+    this.animatedValue = new Animated.Value(0);
+    this.animatedValue.addListener(({value}) => this._animatedValue = value); 
+    this.isMoving = false;
+  }
+  play = (delay) => {
+    console.log("starting animation");
+    this.animatedValue.setValue(0);
+    this.isMoving = true;
+        
+    Animated.timing(this.animatedValue, {
+      toValue: 1,
+      duration: delay,
+      easing: Easing.linear,
+      useNativeDriver: true, // <-- Add this
+    }).start((res) => {
+      // Logic whenever an iteration finishes...
+      //console.log('ended '+res.finished);
+
+      this.isMoving = false;
+    });
+       
   }
   render (){
     var img;
+    console.log("rendering bullet");
     const xpos = this.props.position[0];
     const ypos = this.props.position[1];
     console.log("render: " + this.props.id +" "+xpos+" "+ypos);
     img = require('./images/bullet.png');
 
     return (
-     
-     <Image
+      <Animated.View 
+      style={{
+        overflow: "hidden",
+        width: 80,
+        height: 80,
+        position: "absolute",
+        transform: [ { translateX: ypos}, 
+                     { translateY: this.animatedValue.interpolate({
+                  inputRange:  [0, 1],             
+                  outputRange: [xpos, 0]}) } ]
+      }}
+    >
+
+      <Image //sam image sie respi elegancko
         style={{
           height: 80,
           width: 80,
-          top: xpos,
-          left: ypos,
+          top: 0,
+          left: 0,
           resizeMode: 'stretch'
         }}
         source={img}
       />
+
+    </Animated.View>
+     
+    //  <Image
+    //     style={{
+    //       height: 80,
+    //       width: 80,
+    //       top: xpos,
+    //       left: ypos,
+    //       resizeMode: 'stretch'
+    //     }}
+    //     source={img}
+    //   />
     );
   }
 }
@@ -117,7 +166,8 @@ class Virus extends PureComponent {
   constructor(props) {
     super(props);
     
-    renderers[this.props.id] = this; 
+    renderers[this.props.id] = this;
+    // console.log("xd" + JSON.stringify(renderers[this.props.id])); // co to 
     this.animatedValue = new Animated.Value(0);
     // UWAGA! Nie ma innej mozliwosci na pobranie tej wartości synchronicznie
     this.animatedValue.addListener(({value}) => this._animatedValue = value); 
