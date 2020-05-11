@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { StyleSheet, View, Animated, Easing, Image, Text } from "react-native";
+import { StyleSheet, View, Animated, Easing, Image, Text, Alert } from "react-native";
 import SpriteSheet from 'rn-sprite-sheet';
 import { Accelerometer } from 'expo-sensors';
  
@@ -73,13 +73,24 @@ class Score extends PureComponent {
   render() {
     const x = this.props.position[0];
     const y = this.props.position[1];
+    const score = this.props.score;
     const scorey = this.props.amount;
+    const text = this.props.text;
+    if(text==="Lives"){
+      if(scorey<1){
+        Alert.alert(
+          "congratulations",
+          "you lost",
+          [ ],
+        )
+      }
+    }
   
     
       
     return (
       <View>
-       <Text style={styles.baseText}>Score :  {scorey}</Text>
+       <Text style={styles.baseText}>{text} :  {scorey}</Text>
       </View>
     );
   }
@@ -89,25 +100,23 @@ class Bullet extends PureComponent {
   constructor(props){
     super(props);
     renderers[this.props.id] = this;
-    console.log("xd" + JSON.stringify(renderers[this.props.id])); // co to
+    // console.log("xd" + JSON.stringify(renderers[this.props.id])); // co to
     this.animatedValue = new Animated.Value(0);
     this.animatedValue.addListener(({value}) => this._animatedValue = value); 
     this.isMoving = false;
   }
+
+
   play = (delay) => {
-    console.log("starting animation");
+    // console.log("starting animation");
     this.animatedValue.setValue(0);
     this.isMoving = true;
-        
     Animated.timing(this.animatedValue, {
       toValue: 1,
       duration: delay,
       easing: Easing.linear,
       useNativeDriver: true, // <-- Add this
     }).start((res) => {
-      // Logic whenever an iteration finishes...
-      //console.log('ended '+res.finished);
-
       this.isMoving = false;
     });
        
@@ -115,10 +124,12 @@ class Bullet extends PureComponent {
   render (){
     var img;
     console.log("rendering bullet");
+    console.log(this.animatedValue._animatedValue);
     const xpos = this.props.position[0];
     const ypos = this.props.position[1];
-    console.log("render: " + this.props.id +" "+xpos+" "+ypos);
     img = require('./images/bullet.png');
+
+      
 
     return (
       <Animated.View 
@@ -204,18 +215,6 @@ class Virus extends PureComponent {
     }
     else
       img = require('./images/virus.png');
-    
-      
-    // Poniżej animowany/przesuwany widok w którym osadzony jest statyczny obraz. 
-    // W celu zrobienia poruszajacej się animacji wybuchu (czyli animacja w animacji) wystarczy podmienić <Image> na <SpriteSheet> 
-    // a następnie w kontrolerach (systems.js) odpalać tą animację podobnie jak w metodą play().
-    // Można też pozostawic jak jest i w kontrolerze "na piechotkę" decydowac jaka klatka ma się wyświetlać
-    // poprzez odpowiedni atrybut, ktory jest kopiowny do this.props.hit (patrz wyżej) 
-    
-    // Interpretacja parametrow dla animatedValue.interpolate:
-    //   jak animatedValue == 0 to translateY == -80
-    //   jak animatedValue == 1 to translateY == 684 
-    //   jak pomiedzy 0 i 1 patrz interpolacja liniowa
       
     return (
        
@@ -226,7 +225,7 @@ class Virus extends PureComponent {
           height: 80,
           position: "absolute",
           transform: [ { translateX: x}, 
-                       { translateY: this.animatedValue.interpolate({
+                       { translateY: this.animatedValue.interpolate({ //interpolacja w dokumentacji reacta po prsotu idzie se animacja od 0 do 1 czyli od dolu do gory i napisane pixele na sztywno
                     inputRange:  [0, 1],             
                     outputRange: [-80, 684]}) } ]
         }}

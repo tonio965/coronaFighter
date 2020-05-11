@@ -1,44 +1,56 @@
 import { Accelerometer } from 'expo-sensors';
 
-const VirusSpawner = (entities, { touches, time }) => {
+const VirusSpawner = (entities, { touches, time }) => { //to tez sie tak nazwyalo
   
-  // petla logiki jest uruchamiana co 16ms... w teorii, w praktyce sa to pobozne zyczenia
-  // i odstep czasowy miedzy kolejnymi wywolaniami tej funckji moze wyniesc nawet 100-200ms szczegolnie w emulatorach 
-  // co skutkowałoby plynnoscią animacji na poziomie 5-10FPS dlatego zamiast bezposrednio kontrolować pozycję obiektow sceny
-  // w petli logiki, lepiej jedynie w niej inicjowac i kontrolować przebieg animacji a sama petla animacji jest realizowana
-  // wewnętrznie asynchronicznie ze wsparciem sprzętowym => patrz komponenty Animated w renderers.js  
 
-  for (var key in entities) 
-    if (entities[key].type == 'v') { // wirusy
+  for (var key in entities)  //petla idaca po kazdym bylo juz
+    if (entities[key].type == 'v') { // wirusy to te bylo <- petla przechodzi po kazdym wirusie z entity
 
-      let id = entities[key].id;
+      let id = entities[key].id; //pobiera id
       
-      if (renderers[id] && renderers[id].isMoving) { // porusza sie
-        // przyblizona (ostatnia) pozycja y wirusa
-        // _animatedValue jest uaktualnane asynchronicznie callbackiem
-        //console.log(renderers[id]._animatedValue); 
+      if (renderers[id] && renderers[id].isMoving) { //sprawdza czy sie rusza 
 
-        let x = entities[id].position[0]+40;
+        let x = entities[id].position[0]+40; //jezeli tak to przypisuje x oraz y 
         let y = 684*renderers[id]._animatedValue+40;
+
         
-        if (Math.abs(entities[2].position[0]+64 - x) < 64 &&
+        if (Math.abs(entities[2].position[0]+64 - x) < 64 && // ze statkiem zderzenie bo entity 2  zatem pozmieniajcie kolejnosc i nazwy w calym if
             Math.abs(entities[2].position[1]+64 - y) < 64){
+              if(entities[id].isHit===false){ //jezeli staek jest blisko wirusa o kilka px to zalizza ze sie rozjebal
+                entities[id].isHit=true; //wiec zaznaczam ishit na true
+                entities[id].hit = 1;
+                entities[6].amount++; //dodaje punkty 
+                // console.log(entities[6].amount);
+                entities[8].amount--;//odejmuje 1 zycia
+              }
+          }
+          if(renderers[7] && renderers[7].isMoving){  //na tej samej zasadzie co ze statkiem (jak bedzie zmieniany  obrazek pocisku i wielkosc to zmienic wartosci liczb w ifach)
+            let xBul = entities[7].position[1]+40;
+            let yBul = 684*renderers[7]._animatedValue+40;
+            // if(-30 < Math.abs(x- xBul) && 30 > Math.abs(x- xBul)){
+            //   console.log(" x hit"+ Math.abs(x- xBul));
+
+            // }
+
+            if (-30 < Math.abs(x- xBul) && 30 > Math.abs(x- xBul) && //z bulletem zderzenie
+            Math.abs(yBul - y) < 30){
               if(entities[id].isHit===false){
                 entities[id].isHit=true;
                 entities[id].hit = 1;
                 entities[6].amount++;
-                console.log(entities[6].amount);
+
               }
+          }
           }
       }
            
-      if (renderers[id] && !renderers[id].isMoving) { // "uspiony" za krawedzią ekranu
+      if (renderers[id] && !renderers[id].isMoving) { // ten blok kodu gotowy byl i respi virusy 
         let d = 1000*Math.random();
-        if (d < 10) { // czestotliwosc wypuszczania nowych wirusow = 10/1000 = 0.01 (czyli 1 raz na 100 tikow)
-          entities[id].position = [(412-80)*Math.random(), 0]; // losowa pozycja x
+        if (d < 10) { 
+          entities[id].position = [(412-80)*Math.random(), 0];
           entities[id].hit = 0;
           entities[id].isHit = false;
-          renderers[id].play(4000 + 4000*Math.random()); // losowy czas animacji (przelotu przez cały ekran) 4-8s
+          renderers[id].play(4000 + 4000*Math.random()); 
         }
       }
     }
@@ -46,81 +58,39 @@ const VirusSpawner = (entities, { touches, time }) => {
   return entities;
 };
 
-const ShootAmmo = (entities, { touches }) => {
+const ShootAmmo = (entities, { touches }) => {  //to moj kontroller calkowicie zbudowany od nowa
 
-  if (renderers[7] && !renderers[7].isAnimating)
-    renderers[7].play("idle");	
-  
-  //-- I'm choosing to update the game state (entities) directly for the sake of brevity and simplicity.
-  //-- There's nothing stopping you from treating the game state as immutable and returning a copy..
-  //-- Example: return { ...entities, t.id: { UPDATED COMPONENTS }};
-  //-- That said, it's probably worth considering performance implications in either case.
+
  
-  touches.filter(t => t.type === "press").forEach(t => {
+  touches.filter(t => t.type === "press").forEach(t => { //to mozna zostawic bo jest to po prsotu wykrywanie dotyku na ekranie
        
-    let bul = entities[7];
+    let finger = entities[7]; // w app.js jest lista entities i zawiera ona elementy gry 7 element to pocisk (mozecie pozmieniac kolejnosc typy i nazwy) i sam dodalem go
     
-    if (bul && bul.position) {
-      let count = 0;
-      bul.position[0]=entities[2].position[0];
-      bul.position[1]=entities[2].position[1];
-      // entities[7].position[0]=finger.position[0];
-      // entities[7].position[1]=finger.position[1];
-      entities[7].position[0]=entities[7].position[0]+2;
-      entities[7].position[0]= entities[7].position[0]+2;
-
-      console.log("position"+ entities[7].position[0]+" "+ entities[7].position[1]);
-    }
-  });
- 
-  return entities;
-};
-
-const MoveFighter = (entities, {touches}) => {
-  if (renderers[2] && !renderers[2].isAnimating)
-    renderers[2].play("idle");
-    // console.log(renderers);
-    // console.log(props);
-    // console.log(currY);
-  
-  //-- I'm choosing to update the game state (entities) directly for the sake of brevity and simplicity.
-  //-- There's nothing stopping you from treating the game state as immutable and returning a copy..
-  //-- Example: return { ...entities, t.id: { UPDATED COMPONENTS }};
-  //-- That said, it's probably worth considering performance implications in either case.
-
-  touches.filter(t => t.type === "press").forEach(t => {
-       
-    let finger = entities[7];
-    
-    if (finger && finger.position) {
+    if (finger && finger.position) {  //tutaj ustalam pozycje kliku w sumie mozna pozmieniac nazwy 
       finger.position = [
         finger.position[0]= entities[2].position[1],
         finger.position[1]= entities[2].position[0]
       ];
-      console.log("pagex: "+finger.position[0]);
-      console.log("pagey: "+finger.position[1]);
-      renderers[7].play();
-      
-      // console.log(t.delta.pageX);
-      // console.log(t.delta.pageY);
-      
-      
+      renderers[7].play();  // ta tabela robi się automatico dla wszyskich entities - jak w entityies jest 7 elemtnem pocisk jego renderem jest Bullet z renderers.js i to wlasnie wywoluje jego metode play()
     }
   });
+ 
+  return entities; //zwracam zmieniona tablice entities co 16ms 
+};
 
-
-    let finger = entities[2];
+const MoveFighter = (entities, {touches}) => { //metoda moveFighter juz istnieala wiec mozna zostawic nazwe
+    let finger = entities[2]; //to jest statek, pobieram z listy jego pozycje itp
     if (finger && finger.position) {
       let diffX
       let diffY;
-      Accelerometer.addListener(accelerometerData => {
-        diffX=Math.round(Number(JSON.stringify(accelerometerData.x))*10);
+      Accelerometer.addListener(accelerometerData => { //implementuje akcelerometr tak samo jak w poprzednim zadaniu
+        diffX=Math.round(Number(JSON.stringify(accelerometerData.x))*10); //czemu nazwalem to diffX juz nie pamietam mozna zmainic 
         diffY=Math.round(Number(JSON.stringify(accelerometerData.y))*10);
         finger.position = [
-          finger.position[0]=finger.position[0]- Math.round(Number(JSON.stringify(accelerometerData.x))*10),
+          finger.position[0]=finger.position[0]- Math.round(Number(JSON.stringify(accelerometerData.x))*10), //tu nie ma rocket science, pozmieniajcie nazwy tylko 
           finger.position[1]=finger.position[1] + Math.round(Number(JSON.stringify(accelerometerData.y))*10),
         ];
-        Accelerometer.removeAllListeners();
+        Accelerometer.removeAllListeners(); //wywalam to bo wpadalo w jakas nieskonczona petle i sie nie animowalo nic wiec na nowo z kazda klatka odpalam listernera
       });
       
 
@@ -131,4 +101,4 @@ const MoveFighter = (entities, {touches}) => {
   return entities;
 };
  
-export { MoveFighter, VirusSpawner, ShootAmmo };
+export { MoveFighter, VirusSpawner, ShootAmmo }; //eksportuje kotrolery

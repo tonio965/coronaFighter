@@ -4,7 +4,7 @@
  */
 
 import React, { PureComponent } from "react";
-import { Dimensions, AppRegistry, StyleSheet, StatusBar, Text } from "react-native";
+import { Dimensions, AppRegistry, StyleSheet, StatusBar, Text, Alert } from "react-native";
 import { GameEngine } from "react-native-game-engine";
 import { Virus, Background, Fighter, Score, Bullet } from "./renderers";
 import { MoveFighter, VirusSpawner,ShootAmmo} from "./systems"
@@ -17,7 +17,8 @@ export default class BestGameEver extends PureComponent {
     this.state = {
       x: 150,
       y: 150,
-      score: 0
+      score: 0,
+      lives: 3
     };
   }
  
@@ -27,48 +28,20 @@ export default class BestGameEver extends PureComponent {
     let height = Math.round(Dimensions.get('window').height);
     let currX;
     let currY;
-    // Accelerometer.addListener(accelerometerData => {
-    //   this.setState({
-    //     x: this.state.x + Number(JSON.stringify(accelerometerData.x)),
-    //     y: this.state.y+Number(JSON.stringify(accelerometerData.y))
-    //   });
-    //   console.log("myAccl: "+this.state.x +" "+ this.state.y);
-    // //   // this.state.x=this.state.x + Number(JSON.stringify(accelerometerData.x))*10;
-    // //   // this.state.y=this.state.y+Number(JSON.stringify(accelerometerData.y))*10;
-    //   // console.log(this.state);
-    //   // console.log(currY);
-    // });
-
-    // Tutaj statycznie dodajemy wszystkie byty do sceny (entities), 
-    //   type - typy bytów b-background, f-fighter, v-virus
-    //   position - pozycja komponetyu na ekranie
-    //   renderer - klasa komponentu odpowiedzialnego za rendering bytu
-    // UWAGA! Wszystkie atrybuty obiektu bytu są kopiowane do proposów koponentu renderer.
-    // Ogólna idea silnika jest taka, żeby w kontrolerach zmieniać wartości atrybutów zgodnie z regułami gry, 
-    // a komponent renderera w oparciu o te (skopiowane) dane rysował dany komponent.
-    // Czyli jest to komunikacja jednokierunkowa entities -> <renderer komponent>.
-    // Problem pojawia się, gdy z pewnych względów, potrzebujemy w funkcji kontrolera danych z komponentu renderera,
-    // a z poziomu tablicy entities nie mamy dostępu do instancji obiektu renderera.
-    // Przykład - animacja "sprzętowa" obiektów realizowana po stronie renderera.
-    // Oczywiscie można ją realizować "softwerowo" po stronie kotrolera, zminijać np. w kontrolerze pozycję obiektów.
-    // Taki wydaje sie był pierwotny zamysł twórców silnika, jednak funkcje logiki w praktyce są uruchamiane zbyt rzadko,
-    // bo zamiast co 16ms, w przypadku emulatora mamy co 100-200ms, więc maksymalnie możemy uzsykać 5-10 FPSów. Nędza!         
-    // Rozwiązanie zastosowane tutaj opiera się na tablicy globalnej rendererów połączonych z bytami za pomocą id.
-    // Jest to niestety mało eleganckie, ale działa!
-    // Jesli ktoś ma lepszy pomysł, proszę pisać, mejlować, wszelkie sugestie mile widziane ;)
         
     return (
       <GameEngine
         style={styles.container}
-        systems={[MoveFighter, VirusSpawner]} // funkcje logiki (kontrolery) uruchamiane co 16ms (teoretycznie)
+        systems={[MoveFighter, VirusSpawner, ShootAmmo]} // funkcje logiki (kontrolery) uruchamiane co 16ms (teoretycznie)
         entities={{ 
           1: { id: 1, type: 'b', position: [40,  200], isHit:false, renderer: <Background />}, // tlo
           2: { id: 2, type: 'f', position: [150,150],isHit:false, renderer: <Fighter />}, // fajter
           3: { id: 3, type: 'v', position: [10, 0],isHit:false, renderer: Virus}, // zaraza
           4: { id: 4, type: 'v', position: [20, 0],isHit:false, renderer: Virus}, 
           5: { id: 5, type: 'v', position: [40, 0],isHit:false, renderer: Virus},
-          6: {id: 6, type: 's', position: [80,80], renderer: Score, amount:this.state.score},
-          7: {id: 7, type: "bu", position: [150,150], renderer: Bullet}
+          6: {id: 6, type: 's', position: [80,80], renderer: Score, amount:this.state.score, text: "Score"},
+          7: {id: 7, type: "bu", position: [150,250], renderer: Bullet},
+          8: {id: 8, type: 's', position: [500,80], renderer: Score, amount:this.state.lives, text: "Lives", score: this.state.score}
         }}>
 
         <StatusBar hidden={true} />
