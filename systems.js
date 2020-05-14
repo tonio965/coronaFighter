@@ -1,7 +1,6 @@
 import { Accelerometer } from 'expo-sensors';
 
 const VirusSpawner = (entities, { touches, time }) => { //to tez sie tak nazwyalo
-  
 
   for (var key in entities)  //petla idaca po kazdym bylo juz
     if (entities[key].type == 'v') { // wirusy to te bylo <- petla przechodzi po kazdym wirusie z entity
@@ -22,6 +21,9 @@ const VirusSpawner = (entities, { touches, time }) => { //to tez sie tak nazwyal
                 entities[6].amount++; //dodaje punkty 
                 // console.log(entities[6].amount);
                 entities[8].amount--;//odejmuje 1 zycia
+                if(entities[8].amount===0){
+                  entities[2].isOver=true;
+                }
               }
           }
           if(renderers[7] && renderers[7].isMoving){  //na tej samej zasadzie co ze statkiem (jak bedzie zmieniany  obrazek pocisku i wielkosc to zmienic wartosci liczb w ifach)
@@ -58,10 +60,149 @@ const VirusSpawner = (entities, { touches, time }) => { //to tez sie tak nazwyal
   return entities;
 };
 
+const ZnajdzkaSpawner = (entities, { touches, time }) => { //to tez sie tak nazwyalo
+
+  for (var key in entities)  //petla idaca po kazdym bylo juz
+    if (entities[key].type == 'z') { // wirusy to te bylo <- petla przechodzi po kazdym wirusie z entity
+
+      let id = entities[key].id; //pobiera id
+      
+      if (renderers[id] && renderers[id].isMoving) { //sprawdza czy sie rusza 
+
+        let x = entities[id].position[0]+40; //jezeli tak to przypisuje x oraz y 
+        let y = 684*renderers[id]._animatedValue+40;
+
+        
+        if (Math.abs(entities[2].position[0]+64 - x) < 64 && // ze statkiem zderzenie bo entity 2  zatem pozmieniajcie kolejnosc i nazwy w calym if
+            Math.abs(entities[2].position[1]+64 - y) < 64){
+              if(entities[id].isHit===false){ //jezeli staek jest blisko wirusa o kilka px to zalizza ze sie rozjebal
+                entities[id].isHit=true; //wiec zaznaczam ishit na true
+                entities[id].hit = 1;
+                entities[6].amount++; //dodaje punkty 
+                // console.log(entities[6].amount);
+                entities[8].amount=0;//odejmuje 1 zycia
+                if(entities[8].amount===0){
+                  entities[2].isOver=true;
+                }
+              }
+          }
+
+      }
+           
+      if (renderers[id] && !renderers[id].isMoving) { // ten blok kodu gotowy byl i respi virusy 
+        let d = 1000*Math.random();
+        if (d < 3) { 
+          entities[id].position = [(412-80)*Math.random(), 0];
+          entities[id].hit = 0;
+          entities[id].isHit = false;
+          renderers[id].play(3000 + 3000*Math.random()); 
+        }
+      }
+    }
+     
+  return entities;
+};
+
+const Znajdzka2Spawner = (entities, { touches, time }) => { //to tez sie tak nazwyalo
+
+  for (var key in entities)  //petla idaca po kazdym bylo juz
+    if (entities[key].type == 'z2') { // wirusy to te bylo <- petla przechodzi po kazdym wirusie z entity
+
+      let id = entities[key].id; //pobiera id
+      
+      if (renderers[id] && renderers[id].isMoving) { //sprawdza czy sie rusza 
+
+        let x = entities[id].position[0]+40; //jezeli tak to przypisuje x oraz y 
+        let y = 684*renderers[id]._animatedValue+40;
+
+        
+        if (Math.abs(entities[2].position[0]+64 - x) < 64 && // ze statkiem zderzenie bo entity 2  zatem pozmieniajcie kolejnosc i nazwy w calym if
+            Math.abs(entities[2].position[1]+64 - y) < 64){
+              if(entities[id].isHit===false){ //jezeli staek jest blisko wirusa o kilka px to zalizza ze sie rozjebal
+                entities[id].isHit=true; //wiec zaznaczam ishit na true
+                entities[id].hit = 1;
+                entities[6].amount++; //dodaje punkty 
+                // console.log(entities[6].amount);
+                entities[8].amount++;//odejmuje 1 zycia
+                if(entities[8].amount===0){
+                  entities[2].isOver=true;
+                }
+              }
+          }
+
+      }
+           
+      if (renderers[id] && !renderers[id].isMoving) { // ten blok kodu gotowy byl i respi virusy 
+        let d = 1000*Math.random();
+        if (d < 2) { 
+          entities[id].position = [(412-80)*Math.random(), 0];
+          entities[id].hit = 0;
+          entities[id].isHit = false;
+          renderers[id].play(3000 + 3000*Math.random()); 
+        }
+      }
+    }
+     
+  return entities;
+};
+
+
+// const Znajdzka3Spawner = (entities, { touches, time }) => { //to tez sie tak nazwyalo
+
+//   for (var key in entities)  //petla idaca po kazdym bylo juz
+//     if (entities[key].type == 'z3') { // wirusy to te bylo <- petla przechodzi po kazdym wirusie z entity
+
+//       let id = entities[key].id; //pobiera id
+      
+//       if (renderers[id] && renderers[id].isMoving) { //sprawdza czy sie rusza 
+
+//         let x = entities[id].position[0]+40; //jezeli tak to przypisuje x oraz y 
+//         let y = 684*renderers[id]._animatedValue+40;
+
+        
+//         if (Math.abs(entities[2].position[0]+64 - x) < 64 && // ze statkiem zderzenie bo entity 2  zatem pozmieniajcie kolejnosc i nazwy w calym if
+//             Math.abs(entities[2].position[1]+64 - y) < 64){
+//               if(entities[id].isHit===false){ //jezeli staek jest blisko wirusa o kilka px to zalizza ze sie rozjebal
+//                 entities[id].isHit=true; //wiec zaznaczam ishit na true
+//                 entities[id].hit = 1;
+//                 entities[6].amount++; //dodaje punkty
+//                 entities[3].hit=1;
+//                 entities[4].hit=1;
+//                 entities[5].hit=1;
+//                 entities[3].isHit=true;
+//                 entities[4].isHit=true;
+//                 entities[5].isHit=true;
+//                 renderers[3].hit=true;
+//                 renderers[4].hit=true;
+//                 renderers[5].hit=true;
+//                 // console.log(entities[6].amount);
+//                 entities[8].amount++;//odejmuje 1 zycia
+//                 if(entities[8].amount===0){
+//                   entities[2].isOver=true;
+//                 }
+//               }
+//           }
+
+//       }
+           
+//       if (renderers[id] && !renderers[id].isMoving) { // ten blok kodu gotowy byl i respi virusy 
+//         let d = 1000*Math.random();
+//         if (d < 5) { 
+//           entities[id].position = [(412-80)*Math.random(), 0];
+//           entities[id].hit = 0;
+//           entities[id].isHit = false;
+//           renderers[id].play(3000 + 3000*Math.random()); 
+//         }
+//       }
+//     }
+     
+//   return entities;
+// };
+
+
+
+
 const ShootAmmo = (entities, { touches }) => {  //to moj kontroller calkowicie zbudowany od nowa
-
-
- 
   touches.filter(t => t.type === "press").forEach(t => { //to mozna zostawic bo jest to po prsotu wykrywanie dotyku na ekranie
        
     let finger = entities[7]; // w app.js jest lista entities i zawiera ona elementy gry 7 element to pocisk (mozecie pozmieniac kolejnosc typy i nazwy) i sam dodalem go
@@ -83,15 +224,18 @@ const MoveFighter = (entities, {touches}) => { //metoda moveFighter juz istnieal
     if (finger && finger.position) {
       let diffX
       let diffY;
-      Accelerometer.addListener(accelerometerData => { //implementuje akcelerometr tak samo jak w poprzednim zadaniu
-        diffX=Math.round(Number(JSON.stringify(accelerometerData.x))*10); //czemu nazwalem to diffX juz nie pamietam mozna zmainic 
-        diffY=Math.round(Number(JSON.stringify(accelerometerData.y))*10);
-        finger.position = [
-          finger.position[0]=finger.position[0]- Math.round(Number(JSON.stringify(accelerometerData.x))*10), //tu nie ma rocket science, pozmieniajcie nazwy tylko 
-          finger.position[1]=finger.position[1] + Math.round(Number(JSON.stringify(accelerometerData.y))*10),
-        ];
-        Accelerometer.removeAllListeners(); //wywalam to bo wpadalo w jakas nieskonczona petle i sie nie animowalo nic wiec na nowo z kazda klatka odpalam listernera
-      });
+      if(!entities[2].isOver){
+        Accelerometer.addListener(accelerometerData => { //implementuje akcelerometr tak samo jak w poprzednim zadaniu
+          diffX=Math.round(Number(JSON.stringify(accelerometerData.x))*10); //czemu nazwalem to diffX juz nie pamietam mozna zmainic 
+          diffY=Math.round(Number(JSON.stringify(accelerometerData.y))*10);
+          finger.position = [
+            finger.position[0]=finger.position[0]- Math.round(Number(JSON.stringify(accelerometerData.x))*10), //tu nie ma rocket science, pozmieniajcie nazwy tylko 
+            finger.position[1]=finger.position[1] + Math.round(Number(JSON.stringify(accelerometerData.y))*10),
+          ];
+          Accelerometer.removeAllListeners(); //wywalam to bo wpadalo w jakas nieskonczona petle i sie nie animowalo nic wiec na nowo z kazda klatka odpalam listernera
+        });
+
+      }
       
 
       
@@ -101,4 +245,4 @@ const MoveFighter = (entities, {touches}) => { //metoda moveFighter juz istnieal
   return entities;
 };
  
-export { MoveFighter, VirusSpawner, ShootAmmo }; //eksportuje kotrolery
+export { MoveFighter, VirusSpawner, ShootAmmo, ZnajdzkaSpawner, Znajdzka2Spawner }; //eksportuje kotrolery
